@@ -1,0 +1,140 @@
+/* Path: src/styles/markdown.css */
+/* Purpose: Styles for rendered markdown content in article detail pages */
+/* Dependencies: CSS custom properties from tokens.css */
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-primary);
+  margin: 24px 0 12px;
+  font-weight: 500;
+}
+
+.markdown-body h1 {
+  font-size: 24px;
+}
+
+.markdown-body h2 {
+  font-size: 20px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.markdown-body h3 {
+  font-size: 16px;
+}
+
+.markdown-body p {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.markdown-body a {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.markdown-body a:hover {
+  color: var(--amber);
+}
+
+.markdown-body code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 6px;
+  color: var(--amber);
+}
+
+.markdown-body pre {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.markdown-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+
+.markdown-body li {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 4px;
+}
+
+.markdown-body blockquote {
+  border-left: 2px solid var(--green);
+  margin: 16px 0;
+  padding: 8px 16px;
+  background: rgba(74, 222, 128, 0.04);
+}
+
+.markdown-body blockquote p {
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+.markdown-body strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.markdown-body th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.markdown-body td {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+}

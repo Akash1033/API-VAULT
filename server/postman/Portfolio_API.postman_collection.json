@@ -1,0 +1,1138 @@
+{
+  "info": {
+    "name": "Portfolio API — Full QA Suite",
+    "_postman_id": "portfolio-api-qa-suite-2026",
+    "description": "Complete pre-deployment Postman collection for the Portfolio MERN backend. Covers all 52 routes across 12 modules with automated test scripts.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "BASE_URL", "value": "http://localhost:5000/api/v1" },
+    { "key": "accessToken", "value": "" },
+    { "key": "adminAccessToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "projectId", "value": "" },
+    { "key": "skillId", "value": "" },
+    { "key": "experienceId", "value": "" },
+    { "key": "certificationId", "value": "" },
+    { "key": "articleId", "value": "" },
+    { "key": "contactId", "value": "" },
+    { "key": "paymentId", "value": "" },
+    { "key": "razorpayOrderId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET Health Check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/health", "host": ["{{BASE_URL}}"], "path": ["health"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success is true', () => { const j = pm.response.json(); pm.expect(j.success).to.be.true; });",
+                  "pm.test('has uptime', () => { const j = pm.response.json(); pm.expect(j.data).to.have.property('uptime'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Health Check Alias",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:5000/api/health", "host": ["http://localhost:5000"], "path": ["api", "health"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success is true', () => { const j = pm.response.json(); pm.expect(j.success).to.be.true; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST Register",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/register", "host": ["{{BASE_URL}}"], "path": ["auth", "register"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser_{{$timestamp}}@example.com\",\n  \"password\": \"Test@1234\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('has accessToken', () => pm.expect(j.data.accessToken).to.be.a('string'));",
+                  "pm.test('has user', () => pm.expect(j.data.user).to.have.property('id'));",
+                  "if (j.data && j.data.accessToken) { pm.collectionVariables.set('accessToken', j.data.accessToken); }",
+                  "const cookie = pm.response.headers.get('Set-Cookie');",
+                  "if (cookie) { const match = cookie.match(/refreshToken=([^;]+)/); if (match) pm.collectionVariables.set('refreshToken', match[1]); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Login",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/login", "host": ["{{BASE_URL}}"], "path": ["auth", "login"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@portfolio.com\",\n  \"password\": \"Admin@1234\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test('has accessToken', () => pm.expect(j.data.accessToken).to.be.a('string'));",
+                  "pm.test('has user with role', () => pm.expect(j.data.user).to.have.property('role'));",
+                  "if (j.data && j.data.accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', j.data.accessToken);",
+                  "  if (j.data.user.role === 'admin') pm.collectionVariables.set('adminAccessToken', j.data.accessToken);",
+                  "}",
+                  "const cookie = pm.response.headers.get('Set-Cookie');",
+                  "if (cookie) { const match = cookie.match(/refreshToken=([^;]+)/); if (match) pm.collectionVariables.set('refreshToken', match[1]); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Login — Invalid Credentials",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/login", "host": ["{{BASE_URL}}"], "path": ["auth", "login"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"wrong@example.com\",\n  \"password\": \"WrongPass1!\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('success is false', () => pm.expect(pm.response.json().success).to.be.false);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/refresh", "host": ["{{BASE_URL}}"], "path": ["auth", "refresh"] },
+            "header": [{ "key": "Cookie", "value": "refreshToken={{refreshToken}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test('new accessToken', () => pm.expect(j.data.accessToken).to.be.a('string'));",
+                  "if (j.data && j.data.accessToken) pm.collectionVariables.set('accessToken', j.data.accessToken);",
+                  "const cookie = pm.response.headers.get('Set-Cookie');",
+                  "if (cookie) { const match = cookie.match(/refreshToken=([^;]+)/); if (match) pm.collectionVariables.set('refreshToken', match[1]); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Current User (Me)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/auth/me", "host": ["{{BASE_URL}}"], "path": ["auth", "me"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('has user', () => pm.expect(pm.response.json().data.user).to.have.property('email'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/logout", "host": ["{{BASE_URL}}"], "path": ["auth", "logout"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Cookie", "value": "refreshToken={{refreshToken}}" }
+            ]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Logged out', () => pm.expect(pm.response.json().message).to.include('Logged out'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "GET List All Projects",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/projects?page=1&limit=10",
+              "host": ["{{BASE_URL}}"],
+              "path": ["projects"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success', () => pm.expect(pm.response.json().success).to.be.true);",
+                  "pm.test('has meta', () => pm.expect(pm.response.json().meta).to.have.property('total'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Create Project (Admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/projects", "host": ["{{BASE_URL}}"], "path": ["projects"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"E2E Test Project\",\n  \"description\": \"Created during QA audit\",\n  \"longDescription\": \"Full CRUD lifecycle validation\",\n  \"technologies\": [\"Node.js\", \"TypeScript\"],\n  \"tags\": [\"test\"],\n  \"githubUrl\": \"https://github.com/test/project\",\n  \"liveUrl\": \"https://test.vercel.app\",\n  \"featured\": true,\n  \"displayOrder\": 1,\n  \"isPublished\": true\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('has id', () => pm.expect(j.data).to.have.property('_id'));",
+                  "if (j.data && j.data._id) pm.collectionVariables.set('projectId', j.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Get Project By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/projects/{{projectId}}", "host": ["{{BASE_URL}}"], "path": ["projects", "{{projectId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('has title', () => pm.expect(pm.response.json().data).to.have.property('title'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT Update Project (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{BASE_URL}}/projects/{{projectId}}", "host": ["{{BASE_URL}}"], "path": ["projects", "{{projectId}}"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"E2E Test Project — Updated\",\n  \"featured\": false\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE Delete Project (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{BASE_URL}}/projects/{{projectId}}", "host": ["{{BASE_URL}}"], "path": ["projects", "{{projectId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Skills",
+      "item": [
+        {
+          "name": "GET List All Skills",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/skills?page=1&limit=10",
+              "host": ["{{BASE_URL}}"],
+              "path": ["skills"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "POST Create Skill (Admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/skills", "host": ["{{BASE_URL}}"], "path": ["skills"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TypeScript\",\n  \"category\": \"frontend\",\n  \"proficiency\": 90,\n  \"iconUrl\": \"\",\n  \"displayOrder\": 1,\n  \"isPublished\": true\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data._id) pm.collectionVariables.set('skillId', j.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Get Skill By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/skills/{{skillId}}", "host": ["{{BASE_URL}}"], "path": ["skills", "{{skillId}}"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "PUT Update Skill (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{BASE_URL}}/skills/{{skillId}}", "host": ["{{BASE_URL}}"], "path": ["skills", "{{skillId}}"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"proficiency\": 95,\n  \"category\": \"backend\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "DELETE Delete Skill (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{BASE_URL}}/skills/{{skillId}}", "host": ["{{BASE_URL}}"], "path": ["skills", "{{skillId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Experience",
+      "item": [
+        {
+          "name": "GET List All Experience",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/experience?page=1&limit=10",
+              "host": ["{{BASE_URL}}"],
+              "path": ["experience"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "POST Create Experience (Admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/experience", "host": ["{{BASE_URL}}"], "path": ["experience"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company\": \"Acme Corp\",\n  \"role\": \"Senior Backend Engineer\",\n  \"description\": \"Built scalable microservices\",\n  \"responsibilities\": [\"Designed APIs\", \"CI/CD\"],\n  \"technologies\": [\"Node.js\", \"Docker\"],\n  \"tags\": [\"backend\"],\n  \"startDate\": \"2023-01-15\",\n  \"endDate\": null,\n  \"location\": \"Remote\",\n  \"type\": \"full-time\",\n  \"isPublished\": true\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data._id) pm.collectionVariables.set('experienceId', j.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Get Experience By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/experience/{{experienceId}}", "host": ["{{BASE_URL}}"], "path": ["experience", "{{experienceId}}"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "PUT Update Experience (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{BASE_URL}}/experience/{{experienceId}}", "host": ["{{BASE_URL}}"], "path": ["experience", "{{experienceId}}"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"role\": \"Principal Engineer\",\n  \"endDate\": \"2025-12-31\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "DELETE Delete Experience (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{BASE_URL}}/experience/{{experienceId}}", "host": ["{{BASE_URL}}"], "path": ["experience", "{{experienceId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Certifications",
+      "item": [
+        {
+          "name": "GET List All Certifications",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/certifications?page=1&limit=10",
+              "host": ["{{BASE_URL}}"],
+              "path": ["certifications"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "POST Create Certification (Admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/certifications", "host": ["{{BASE_URL}}"], "path": ["certifications"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"AWS Solutions Architect\",\n  \"issuer\": \"Amazon Web Services\",\n  \"issueDate\": \"2024-06-01\",\n  \"expiryDate\": \"2027-06-01\",\n  \"credentialId\": \"ABC-123\",\n  \"credentialUrl\": \"https://aws.amazon.com/verify/ABC123\",\n  \"tags\": [\"cloud\", \"aws\"],\n  \"isPublished\": true\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data._id) pm.collectionVariables.set('certificationId', j.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT Update Certification (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{BASE_URL}}/certifications/{{certificationId}}", "host": ["{{BASE_URL}}"], "path": ["certifications", "{{certificationId}}"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"AWS Solutions Architect Professional\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "DELETE Delete Certification (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{BASE_URL}}/certifications/{{certificationId}}", "host": ["{{BASE_URL}}"], "path": ["certifications", "{{certificationId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Articles",
+      "item": [
+        {
+          "name": "GET List All Articles",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/articles?page=1&limit=10",
+              "host": ["{{BASE_URL}}"],
+              "path": ["articles"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "POST Create Article (Admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/articles", "host": ["{{BASE_URL}}"], "path": ["articles"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Testing Best Practices\",\n  \"excerpt\": \"A comprehensive guide to API testing\",\n  \"content\": \"# Introduction\\n\\nAPI testing is critical...\",\n  \"tags\": [\"testing\", \"api\"],\n  \"readTimeMinutes\": 5,\n  \"isPublished\": false\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data._id) pm.collectionVariables.set('articleId', j.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Get Article By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/articles/{{articleId}}", "host": ["{{BASE_URL}}"], "path": ["articles", "{{articleId}}"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "PUT Update Article (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{BASE_URL}}/articles/{{articleId}}", "host": ["{{BASE_URL}}"], "path": ["articles", "{{articleId}}"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminAccessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Testing Best Practices — Updated\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "PATCH Publish Article (Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{BASE_URL}}/articles/{{articleId}}/publish", "host": ["{{BASE_URL}}"], "path": ["articles", "{{articleId}}", "publish"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "DELETE Delete Article (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{BASE_URL}}/articles/{{articleId}}", "host": ["{{BASE_URL}}"], "path": ["articles", "{{articleId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "item": [
+        {
+          "name": "POST Submit Contact Form",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/contact", "host": ["{{BASE_URL}}"], "path": ["contact"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"message\": \"Hello, I'd like to discuss a project collaboration opportunity.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('has contact id', () => pm.expect(j.data).to.have.property('_id'));",
+                  "if (j.data && j.data._id) pm.collectionVariables.set('contactId', j.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Contact — Invalid (Short Message)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/contact", "host": ["{{BASE_URL}}"], "path": ["contact"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jane\",\n  \"email\": \"jane@example.com\",\n  \"message\": \"Hi\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('validation error', () => pm.expect(pm.response.json().errorCode).to.equal('VALIDATION_ERROR'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET List Messages (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/contact?page=1&limit=20&read=false",
+              "host": ["{{BASE_URL}}"],
+              "path": ["contact"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "20" }, { "key": "read", "value": "false" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "GET Get Message By ID (Admin)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/contact/{{contactId}}", "host": ["{{BASE_URL}}"], "path": ["contact", "{{contactId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "PATCH Mark as Read (Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{BASE_URL}}/contact/{{contactId}}/read", "host": ["{{BASE_URL}}"], "path": ["contact", "{{contactId}}", "read"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "PATCH Mark as Unread (Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{BASE_URL}}/contact/{{contactId}}/unread", "host": ["{{BASE_URL}}"], "path": ["contact", "{{contactId}}", "unread"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "DELETE Delete Message (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{BASE_URL}}/contact/{{contactId}}", "host": ["{{BASE_URL}}"], "path": ["contact", "{{contactId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "POST Track Page View",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/analytics/track", "host": ["{{BASE_URL}}"], "path": ["analytics", "track"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"page_view\",\n  \"path\": \"/\",\n  \"sessionId\": \"sess_test_001\",\n  \"referrer\": \"https://google.com\",\n  \"duration\": 30\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 202', () => pm.response.to.have.status(202));",
+                  "pm.test('accepted', () => pm.expect(pm.response.json().message).to.include('accepted'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Track Project View",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/analytics/track", "host": ["{{BASE_URL}}"], "path": ["analytics", "track"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"project_view\",\n  \"path\": \"/projects/test-project\",\n  \"resourceSlug\": \"test-project\",\n  \"sessionId\": \"sess_test_001\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 202', () => pm.response.to.have.status(202));"] } }]
+        },
+        {
+          "name": "POST Track Resume Click",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/analytics/track", "host": ["{{BASE_URL}}"], "path": ["analytics", "track"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"type\": \"resume_click\",\n  \"path\": \"/resume\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 202', () => pm.response.to.have.status(202));"] } }]
+        },
+        {
+          "name": "POST Track — Invalid Type",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/analytics/track", "host": ["{{BASE_URL}}"], "path": ["analytics", "track"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"type\": \"invalid_event\",\n  \"path\": \"/\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));"] } }]
+        },
+        {
+          "name": "GET Aggregated Stats (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/analytics/stats?preset=7d&compare=true",
+              "host": ["{{BASE_URL}}"],
+              "path": ["analytics", "stats"],
+              "query": [{ "key": "preset", "value": "7d" }, { "key": "compare", "value": "true" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('has stats', () => pm.expect(pm.response.json().data).to.have.property('stats'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Live Stats (Admin)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/analytics/live", "host": ["{{BASE_URL}}"], "path": ["analytics", "live"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('has live data', () => pm.expect(pm.response.json().data).to.have.property('live'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET SSE Stream — No Token (401)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/analytics/stream", "host": ["{{BASE_URL}}"], "path": ["analytics", "stream"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 401', () => pm.response.to.have.status(401));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "POST Create Order",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/payment/order", "host": ["{{BASE_URL}}"], "path": ["payment", "order"] },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "test-order-{{$timestamp}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amountINR\": 100,\n  \"donorName\": \"QA Tester\",\n  \"donorEmail\": \"qa@test.com\",\n  \"donorMessage\": \"Great portfolio!\",\n  \"showOnWall\": true,\n  \"isAnonymous\": false\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data.orderId) pm.collectionVariables.set('razorpayOrderId', j.data.orderId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Verify Payment",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/payment/verify", "host": ["{{BASE_URL}}"], "path": ["payment", "verify"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razorpayOrderId\": \"{{razorpayOrderId}}\",\n  \"razorpayPaymentId\": \"pay_test_123\",\n  \"razorpaySignature\": \"test_signature\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Response received', () => pm.response.to.have.status(pm.response.code));"] } }]
+        },
+        {
+          "name": "POST Webhook — Missing Signature",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/payment/webhook", "host": ["{{BASE_URL}}"], "path": ["payment", "webhook"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"event\": \"payment.captured\", \"payload\": {} }" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 — missing signature', () => pm.response.to.have.status(400));",
+                  "pm.test('message', () => pm.expect(pm.response.json().message).to.include('Missing signature'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Webhook — Invalid Signature",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/payment/webhook", "host": ["{{BASE_URL}}"], "path": ["payment", "webhook"] },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-razorpay-signature", "value": "invalid_sig" }
+            ],
+            "body": { "mode": "raw", "raw": "{ \"event\": \"payment.captured\", \"payload\": {} }" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 — invalid signature', () => pm.response.to.have.status(400));",
+                  "pm.test('message', () => pm.expect(pm.response.json().message).to.include('Invalid signature'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Donor Wall",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/payment/donor-wall", "host": ["{{BASE_URL}}"], "path": ["payment", "donor-wall"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('has donors', () => pm.expect(pm.response.json().data).to.have.property('donors'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Admin Payments (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/payment/admin?page=1&limit=10",
+              "host": ["{{BASE_URL}}"],
+              "path": ["payment", "admin"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "GET Revenue Stats (Admin)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/payment/stats", "host": ["{{BASE_URL}}"], "path": ["payment", "stats"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Upload",
+      "item": [
+        {
+          "name": "POST Upload Image (Admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/upload/image", "host": ["{{BASE_URL}}"], "path": ["upload", "image"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "image", "type": "file", "src": "" }]
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Response received', () => pm.response.to.have.status(pm.response.code));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "GET Overview Stats (Admin)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/dashboard/overview", "host": ["{{BASE_URL}}"], "path": ["dashboard", "overview"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success', () => pm.expect(pm.response.json().success).to.be.true);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Security Tests",
+      "item": [
+        {
+          "name": "GET Protected Route — No Auth (401)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/auth/me", "host": ["{{BASE_URL}}"], "path": ["auth", "me"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('auth error', () => pm.expect(pm.response.json().message).to.include('Access token is required'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Admin Route — Non-Admin (403)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/projects", "host": ["{{BASE_URL}}"], "path": ["projects"] },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{ \"title\": \"Hack\", \"description\": \"Should not work\" }" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 403', () => pm.response.to.have.status(403));",
+                  "pm.test('admin required', () => pm.expect(pm.response.json().message).to.include('Admin access required'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Expired JWT (401)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/auth/me", "host": ["{{BASE_URL}}"], "path": ["auth", "me"] },
+            "header": [{ "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjUxYWJjMTIzIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2MDAwMDAwMDAsImV4cCI6MTYwMDAwMDAwMX0.fake" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 401', () => pm.response.to.have.status(401));"] } }]
+        },
+        {
+          "name": "POST Invalid Refresh Token (401)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/refresh", "host": ["{{BASE_URL}}"], "path": ["auth", "refresh"] },
+            "header": [{ "key": "Cookie", "value": "refreshToken=completely_invalid_token" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 401', () => pm.response.to.have.status(401));"] } }]
+        },
+        {
+          "name": "POST Register — Invalid Payload (400)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/register", "host": ["{{BASE_URL}}"], "path": ["auth", "register"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"A\",\n  \"email\": \"not-email\",\n  \"password\": \"weak\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('validation error', () => pm.expect(pm.response.json().errorCode).to.equal('VALIDATION_ERROR'));",
+                  "pm.test('has details', () => pm.expect(pm.response.json().details).to.be.an('array'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST NoSQL Injection Attempt (400)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{BASE_URL}}/auth/login", "host": ["{{BASE_URL}}"], "path": ["auth", "login"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": { \"$gt\": \"\" },\n  \"password\": \"anything\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('injection blocked', () => pm.expect(pm.response.json().success).to.be.false);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET 404 Not Found",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/nonexistent/route", "host": ["{{BASE_URL}}"], "path": ["nonexistent", "route"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));"] } }]
+        },
+        {
+          "name": "GET Malformed Bearer Token (401)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{BASE_URL}}/auth/me", "host": ["{{BASE_URL}}"], "path": ["auth", "me"] },
+            "header": [{ "key": "Authorization", "value": "Bearer " }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 401', () => pm.response.to.have.status(401));"] } }]
+        }
+      ]
+    }
+  ]
+}

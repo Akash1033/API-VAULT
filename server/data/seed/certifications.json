@@ -1,0 +1,32 @@
+[
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c741" },
+    "title": "AWS Certified Solutions Architect – Associate",
+    "slug": "aws-certified-solutions-architect",
+    "issuer": "Amazon Web Services",
+    "issueDate": { "$date": "2022-05-10T00:00:00.000Z" },
+    "expiryDate": { "$date": "2025-05-10T00:00:00.000Z" },
+    "credentialId": "AWS-12345678",
+    "credentialUrl": "https://aws.amazon.com/certification/verify",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+    "tags": ["Cloud", "AWS", "Architecture"],
+    "isPublished": true,
+    "createdAt": { "$date": "2023-01-10T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-10T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c742" },
+    "title": "MongoDB Node.js Developer Path",
+    "slug": "mongodb-nodejs-developer-path",
+    "issuer": "MongoDB University",
+    "issueDate": { "$date": "2023-08-15T00:00:00.000Z" },
+    "expiryDate": null,
+    "credentialId": "MDB-98765432",
+    "credentialUrl": "https://learn.mongodb.com/verify",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+    "tags": ["Database", "NoSQL", "Node.js"],
+    "isPublished": true,
+    "createdAt": { "$date": "2023-09-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-09-01T00:00:00.000Z" }
+  }
+]

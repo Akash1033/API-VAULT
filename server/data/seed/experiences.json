@@ -1,0 +1,44 @@
+[
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c731" },
+    "company": "Tech Solutions Inc.",
+    "slug": "tech-solutions-inc",
+    "role": "Senior Frontend Engineer",
+    "description": "Led the frontend team in migrating legacy Angular applications to React.",
+    "responsibilities": [
+      "Architected the new React frontend application using Next.js and Tailwind CSS",
+      "Mentored junior developers and conducted code reviews",
+      "Improved Lighthouse performance scores by 40%"
+    ],
+    "technologies": ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+    "tags": ["Frontend", "Leadership", "Performance Optimization"],
+    "startDate": { "$date": "2021-03-01T00:00:00.000Z" },
+    "endDate": { "$date": "2024-01-15T00:00:00.000Z" },
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "isPublished": true,
+    "createdAt": { "$date": "2024-02-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2024-02-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c732" },
+    "company": "Creative Agency",
+    "slug": "creative-agency",
+    "role": "Full Stack Developer",
+    "description": "Developed and maintained multiple client websites and web applications.",
+    "responsibilities": [
+      "Built custom CMS solutions for clients using Node.js and MongoDB",
+      "Integrated third-party APIs including Stripe, Twilio, and SendGrid",
+      "Collaborated with designers to implement pixel-perfect UIs"
+    ],
+    "technologies": ["Node.js", "Express", "React", "MongoDB"],
+    "tags": ["Full Stack", "Client Work", "API Integration"],
+    "startDate": { "$date": "2018-06-01T00:00:00.000Z" },
+    "endDate": { "$date": "2021-02-28T00:00:00.000Z" },
+    "location": "New York, NY",
+    "type": "full-time",
+    "isPublished": true,
+    "createdAt": { "$date": "2024-02-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2024-02-01T00:00:00.000Z" }
+  }
+]

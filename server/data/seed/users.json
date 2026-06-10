@@ -1,0 +1,22 @@
+[
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c710" },
+    "name": "Admin User",
+    "email": "admin@portfolio.local",
+    "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewK4v.vR5.0QzD6a",
+    "role": "admin",
+    "isActive": true,
+    "createdAt": { "$date": "2023-01-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c709" },
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewK4v.vR5.0QzD6a",
+    "role": "user",
+    "isActive": true,
+    "createdAt": { "$date": "2023-01-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-01T00:00:00.000Z" }
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c721" },
+    "title": "E-Commerce Platform",
+    "slug": "e-commerce-platform",
+    "description": "A full-stack MERN e-commerce platform with Stripe integration.",
+    "longDescription": "This comprehensive platform includes advanced product filtering, a shopping cart, Stripe payment integration, and an admin dashboard for inventory management.",
+    "technologies": ["React", "Node.js", "MongoDB", "Stripe", "Tailwind CSS"],
+    "tags": ["Full Stack", "E-Commerce", "Payment Gateway"],
+    "githubUrl": "https://github.com/example/ecommerce",
+    "liveUrl": "https://ecommerce.example.com",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80"
+    ],
+    "featured": true,
+    "displayOrder": 1,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-02-15T08:30:00.000Z" },
+    "updatedAt": { "$date": "2023-02-15T08:30:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c722" },
+    "title": "Real-time Chat Application",
+    "slug": "real-time-chat",
+    "description": "A real-time messaging application using Socket.io and Redis.",
+    "longDescription": "Built a scalable chat application allowing users to create rooms, send direct messages, and see read receipts. Leverages Redis pub/sub for scaling across multiple instances.",
+    "technologies": ["React", "Node.js", "Socket.io", "Redis", "MongoDB"],
+    "tags": ["Real-time", "WebSockets", "Chat"],
+    "githubUrl": "https://github.com/example/chat-app",
+    "liveUrl": "https://chat.example.com",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80"
+    ],
+    "featured": true,
+    "displayOrder": 2,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-05-10T14:45:00.000Z" },
+    "updatedAt": { "$date": "2023-05-10T14:45:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c723" },
+    "title": "Task Management Dashboard",
+    "slug": "task-management-dashboard",
+    "description": "A Kanban-style task management tool inspired by Trello.",
+    "longDescription": "Features drag-and-drop functionality, task assignment, due dates, and activity logging. The backend is built with Express and MongoDB, and the frontend uses React Beautiful DnD.",
+    "technologies": ["React", "Express", "Mongoose", "Tailwind CSS"],
+    "tags": ["Productivity", "Drag & Drop", "Dashboard"],
+    "githubUrl": "https://github.com/example/task-board",
+    "liveUrl": "",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=800&q=80"
+    ],
+    "featured": false,
+    "displayOrder": 3,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-08-20T09:15:00.000Z" },
+    "updatedAt": { "$date": "2023-08-20T09:15:00.000Z" }
+  }
+]

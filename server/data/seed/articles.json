@@ -1,0 +1,30 @@
+[
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c751" },
+    "title": "Understanding the MERN Stack in 2024",
+    "slug": "understanding-mern-stack-2024",
+    "excerpt": "A deep dive into how MongoDB, Express, React, and Node.js work together to build modern scalable web applications.",
+    "content": "The MERN stack continues to be one of the most popular choices for full-stack developers. In this article, we'll explore the benefits of using an all-JavaScript stack, discuss modern architecture patterns like Controller-Service-Repository, and look at how to optimize performance across all layers. \n\n## The Role of MongoDB\n\nMongoDB provides a flexible, schema-less approach to data storage, which pairs perfectly with JSON data structures used throughout the stack...",
+    "coverImageUrl": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["MERN", "JavaScript", "Web Development"],
+    "readTimeMinutes": 5,
+    "isPublished": true,
+    "publishedAt": { "$date": "2024-01-15T10:00:00.000Z" },
+    "createdAt": { "$date": "2024-01-10T10:00:00.000Z" },
+    "updatedAt": { "$date": "2024-01-15T10:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c752" },
+    "title": "Mastering TypeScript with React",
+    "slug": "mastering-typescript-react",
+    "excerpt": "Learn how to strongly type your React components, hooks, and context for a more robust frontend architecture.",
+    "content": "TypeScript has revolutionized how we write React applications by providing compile-time safety and superior developer experience. \n\n## Typing Props and State\n\nOne of the most immediate benefits of TypeScript in React is the ability to define exact shapes for component props. This eliminates runtime errors caused by missing or incorrect data types...",
+    "coverImageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["TypeScript", "React", "Frontend"],
+    "readTimeMinutes": 7,
+    "isPublished": true,
+    "publishedAt": { "$date": "2024-03-22T08:30:00.000Z" },
+    "createdAt": { "$date": "2024-03-20T08:30:00.000Z" },
+    "updatedAt": { "$date": "2024-03-22T08:30:00.000Z" }
+  }
+]

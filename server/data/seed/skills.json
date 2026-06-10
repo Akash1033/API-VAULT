@@ -1,0 +1,62 @@
+[
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c711" },
+    "name": "React",
+    "slug": "react",
+    "category": "frontend",
+    "proficiency": 95,
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+    "displayOrder": 1,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-01-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c712" },
+    "name": "Node.js",
+    "slug": "node-js",
+    "category": "backend",
+    "proficiency": 90,
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+    "displayOrder": 2,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-01-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c713" },
+    "name": "MongoDB",
+    "slug": "mongodb",
+    "category": "database",
+    "proficiency": 85,
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
+    "displayOrder": 3,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-01-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c714" },
+    "name": "TypeScript",
+    "slug": "typescript",
+    "category": "frontend",
+    "proficiency": 92,
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+    "displayOrder": 4,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-01-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "60d5ecb8b311d8106015c715" },
+    "name": "Docker",
+    "slug": "docker",
+    "category": "devops",
+    "proficiency": 75,
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg",
+    "displayOrder": 5,
+    "isPublished": true,
+    "createdAt": { "$date": "2023-01-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2023-01-01T00:00:00.000Z" }
+  }
+]

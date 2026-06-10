@@ -1,0 +1,48 @@
+/*
+Path: src/styles/tokens.css
+Purpose: Core CSS token system for dark theme styling and custom animations
+*/
+:root {
+  --bg-base: #0a0c0b;
+  --bg-surface: #0d0f0e;
+  --bg-raised: #161a18;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #4b5563;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.13);
+  --green: #4ade80;
+  --amber: #fbbf24;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --purple: #c084fc;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  cursor: crosshair;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
