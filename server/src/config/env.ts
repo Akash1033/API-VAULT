@@ -27,7 +27,7 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().min(1, 'JWT_REFRESH_EXPIRES_IN is required').default('7d'),
 
   // CORS
-  CORS_ORIGIN: z.string().min(1, 'CORS_ORIGIN is required'),
+  FRONTEND_URL: z.string().min(1, 'FRONTEND_URL is required').transform((str) => str.split(',').map(s => s.trim())),
 
   // Cloudinary
   CLOUDINARY_CLOUD_NAME: z.string().min(1, 'CLOUDINARY_CLOUD_NAME is required'),
