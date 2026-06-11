@@ -18,7 +18,7 @@ const envSchema = z.object({
   MONGODB_MAX_POOL_SIZE: z.coerce.number().int().positive().default(10),
 
   // Redis
-  REDIS_URL: z.string().min(1, 'REDIS_URL is required'),
+  REDIS_URL: z.string().optional().default(''),
 
   // JWT
   JWT_ACCESS_SECRET: z.string().min(64, 'JWT_ACCESS_SECRET must be at least 64 characters'),

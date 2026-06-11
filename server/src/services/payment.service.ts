@@ -9,7 +9,7 @@ import { emailService } from './email.service.js';
 import { AppError } from '../utils/AppError.js';
 import { logger } from '../utils/logger.js';
 import { env } from '../config/env.js';
-import { redis } from '../config/redis.js';
+import { redis, isRedisAvailable } from '../config/redis.js';
 import { HttpStatusCode, ErrorCode } from '../types/common.types.js';
 
 /**
@@ -170,16 +170,18 @@ export const paymentService = {
     // MongoDB idempotency (webhookVerified flag) is the real guard;
     // Redis is a fast early exit to avoid unnecessary DB queries.
     const dedupeKey = `webhook:processed:${paymentId}`;
-    try {
-      const alreadyProcessed = await redis.get(dedupeKey);
-      if (alreadyProcessed) {
-        logger.info('Webhook deduplicated via Redis', { paymentId });
-        return;
+    if (isRedisAvailable()) {
+      try {
+        const alreadyProcessed = await redis!.get(dedupeKey);
+        if (alreadyProcessed) {
+          logger.info('Webhook deduplicated via Redis', { paymentId });
+          return;
+        }
+        // Mark as processing with 48hr TTL (longer than Razorpay's 24hr retry window)
+        await redis!.setex(dedupeKey, 48 * 60 * 60, '1');
+      } catch {
+        // Redis failure — proceed to MongoDB idempotency check
       }
-      // Mark as processing with 48hr TTL (longer than Razorpay's 24hr retry window)
-      await redis.setex(dedupeKey, 48 * 60 * 60, '1');
-    } catch {
-      // Redis failure — proceed to MongoDB idempotency check
     }
 
     // Idempotency check — skip if already webhook-verified

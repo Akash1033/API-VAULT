@@ -15,17 +15,24 @@ import { trackEventSchema, statsQuerySchema } from '../../validators/analytics.v
 import { globalLimiter } from '../../middleware/rateLimiter.js';
 import rateLimit from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
-import { redis } from '../../config/redis.js';
+import { redis, isRedisAvailable } from '../../config/redis.js';
+
+// Build store config conditionally — use Redis when available, memory otherwise
+function buildTrackLimiterStore() {
+  if (isRedisAvailable()) {
+    return new RedisStore({
+      sendCommand: (...args: string[]) => redis!.call(args[0], ...args.slice(1)) as any,
+    });
+  }
+  return undefined; // Falls back to express-rate-limit's default MemoryStore
+}
 
 const trackLimiter = rateLimit({
   windowMs: 60 * 1000,           // 1 minute window
   max: 20,                        // max 20 track events per IP per minute
   standardHeaders: true,
   legacyHeaders: false,
-  // Use Redis store so rate limit persists across server restarts
-  store: new RedisStore({
-    sendCommand: (...args: string[]) => redis.call(args[0], ...args.slice(1)) as any,
-  }),
+  store: buildTrackLimiterStore(),
   message: {
     success: false,
     errors: [{ code: 'RATE_LIMIT', message: 'Slow down — too many tracking events.' }]

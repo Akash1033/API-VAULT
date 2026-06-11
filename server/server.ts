@@ -4,6 +4,7 @@
 
 import { env } from './src/config/env.js';
 import { connectDB, registerShutdownHooks } from './src/config/db.js';
+import { connectRedis } from './src/config/redis.js';
 import { app } from './src/app.js';
 import { logger } from './src/utils/logger.js';
 import { logRegisteredRoutes } from './src/utils/logRoutes.js';
@@ -14,10 +15,13 @@ async function bootstrap(): Promise<void> {
     // 1. Connect to MongoDB (retry logic is inside connectDB)
     await connectDB();
 
-    // 2. Register graceful shutdown hooks
+    // 2. Connect to Redis (optional — app works without it)
+    await connectRedis();
+
+    // 3. Register graceful shutdown hooks
     registerShutdownHooks();
 
-    // 3. Start HTTP server
+    // 4. Start HTTP server
     const server = app.listen(env.PORT, () => {
       logger.info(`🚀 Server running on port ${env.PORT}`, {
         environment: env.NODE_ENV,
@@ -28,7 +32,7 @@ async function bootstrap(): Promise<void> {
       logRegisteredRoutes(app);
     });
 
-    // 4. Handle server-level errors
+    // 5. Handle server-level errors
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
         logger.error(`❌ Port ${env.PORT} is already in use`);

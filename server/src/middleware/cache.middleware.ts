@@ -3,16 +3,17 @@
 // Dependencies: redis, express, logger
 
 import type { Request, Response, NextFunction } from 'express';
-import { redis } from '../config/redis.js';
+import { redis, isRedisAvailable } from '../config/redis.js';
 import { logger } from '../utils/logger.js';
 
 /**
  * Cache GET requests for a specific duration.
  * Uses method + url as the cache key.
+ * Skips caching entirely when Redis is unavailable.
  */
 export function cacheRoute(ttlSeconds: number) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    if (req.method !== 'GET') {
+    if (req.method !== 'GET' || !isRedisAvailable()) {
       next();
       return;
     }
@@ -27,7 +28,7 @@ export function cacheRoute(ttlSeconds: number) {
     const key = `cache:${req.method}:${baseUrl}${sortedQuery ? '?' + sortedQuery : ''}`;
 
     try {
-      const cachedData = await redis.get(key);
+      const cachedData = await redis!.get(key);
 
       if (cachedData) {
         res.setHeader('X-Cache', 'HIT');
@@ -41,8 +42,8 @@ export function cacheRoute(ttlSeconds: number) {
       const originalJson = res.json;
       res.json = function (body: unknown) {
         // Only cache successful responses
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          redis.setex(key, ttlSeconds, JSON.stringify(body)).catch((err: unknown) => {
+        if (res.statusCode >= 200 && res.statusCode < 300 && isRedisAvailable()) {
+          redis!.setex(key, ttlSeconds, JSON.stringify(body)).catch((err: unknown) => {
             logger.error('Redis cache write error', { error: (err as Error).message });
           });
         }
@@ -60,6 +61,7 @@ export function cacheRoute(ttlSeconds: number) {
 /**
  * Invalidate cache keys matching a pattern.
  * Useful for POST/PUT/DELETE operations.
+ * Skips invalidation when Redis is unavailable.
  */
 export function invalidateCache(pattern: string) {
   return async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -69,12 +71,12 @@ export function invalidateCache(pattern: string) {
       // Restore original function to prevent double execution if called multiple times
       res.json = originalJson;
 
-      if (res.statusCode >= 200 && res.statusCode < 300) {
+      if (res.statusCode >= 200 && res.statusCode < 300 && isRedisAvailable()) {
         (async () => {
           try {
-            const keys = await redis.keys(`cache:GET:${pattern}*`);
+            const keys = await redis!.keys(`cache:GET:${pattern}*`);
             if (keys.length > 0) {
-              await redis.del(keys);
+              await redis!.del(keys);
             }
           } catch (err) {
             logger.error('Redis cache invalidation error', { error: (err as Error).message });

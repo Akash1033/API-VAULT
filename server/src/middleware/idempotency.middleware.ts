@@ -3,7 +3,7 @@
 // Dependencies: ioredis (via redis config)
 
 import type { Request, Response, NextFunction } from 'express';
-import { redis } from '../config/redis.js';
+import { redis, isRedisAvailable } from '../config/redis.js';
 
 /**
  * Idempotency guard for the payment order creation endpoint.
@@ -19,6 +19,12 @@ export async function paymentIdempotency(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  // Skip entirely if Redis is not available
+  if (!isRedisAvailable()) {
+    next();
+    return;
+  }
+
   try {
     const { donorEmail, amountINR } = req.body as {
       donorEmail?: string;
@@ -34,7 +40,7 @@ export async function paymentIdempotency(
     const minuteWindow = Math.floor(Date.now() / 60000);
     const key = `idempotency:payment:${req.ip}:${donorEmail}:${amountINR}:${minuteWindow}`;
 
-    const existing = await redis.get(key);
+    const existing = await redis!.get(key);
     if (existing) {
       res.status(409).json({
         success: false,
@@ -50,7 +56,7 @@ export async function paymentIdempotency(
     }
 
     // Mark this combination as in-flight for 60 seconds
-    await redis.setex(key, 60, '1');
+    await redis!.setex(key, 60, '1');
     next();
   } catch {
     // Redis failure — allow request through (non-blocking).

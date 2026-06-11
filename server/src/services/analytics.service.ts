@@ -3,7 +3,7 @@
 // Dependencies: analytics.model, redis config, env config, crypto, logger
 
 import { AnalyticsEvent, type EventType } from '../models/analytics.model.js';
-import { redis } from '../config/redis.js';
+import { redis, isRedisAvailable } from '../config/redis.js';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
 import { isBot, isAdminPath } from '../utils/botDetector.js';
@@ -190,13 +190,15 @@ export const analyticsService = {
     const cacheKey = `analytics:stats:${range.from.toISOString()}:${range.to.toISOString()}:${String(withComparison)}`;
 
     // Try cache first
-    try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        return JSON.parse(cached) as StatsResult;
+    if (isRedisAvailable()) {
+      try {
+        const cached = await redis!.get(cacheKey);
+        if (cached) {
+          return JSON.parse(cached) as StatsResult;
+        }
+      } catch {
+        // Redis miss or parse error — compute fresh
       }
-    } catch {
-      // Redis miss or parse error — compute fresh
     }
 
     // Compute all stats in parallel
@@ -252,10 +254,12 @@ export const analyticsService = {
     }
 
     // Cache for 30 seconds
-    try {
-      await redis.setex(cacheKey, 30, JSON.stringify(stats));
-    } catch {
-      // Cache write failure is non-fatal
+    if (isRedisAvailable()) {
+      try {
+        await redis!.setex(cacheKey, 30, JSON.stringify(stats));
+      } catch {
+        // Cache write failure is non-fatal
+      }
     }
 
     return stats;
@@ -268,13 +272,15 @@ export const analyticsService = {
   async getLiveStats(): Promise<LiveStats> {
     const cacheKey = 'analytics:live';
 
-    try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        return JSON.parse(cached) as LiveStats;
+    if (isRedisAvailable()) {
+      try {
+        const cached = await redis!.get(cacheKey);
+        if (cached) {
+          return JSON.parse(cached) as LiveStats;
+        }
+      } catch {
+        // proceed to compute
       }
-    } catch {
-      // proceed to compute
     }
 
     const now = new Date();
@@ -304,10 +310,12 @@ export const analyticsService = {
       updatedAt: new Date().toISOString(),
     };
 
-    try {
-      await redis.setex(cacheKey, 5, JSON.stringify(live));
-    } catch {
-      // non-fatal
+    if (isRedisAvailable()) {
+      try {
+        await redis!.setex(cacheKey, 5, JSON.stringify(live));
+      } catch {
+        // non-fatal
+      }
     }
 
     return live;

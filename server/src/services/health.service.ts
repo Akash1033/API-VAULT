@@ -3,7 +3,7 @@
 // Dependencies: mongoose
 
 import mongoose from 'mongoose';
-import { redis } from '../config/redis.js';
+import { redis, isRedisAvailable } from '../config/redis.js';
 
 interface HealthStatus {
   readonly status: 'healthy' | 'degraded' | 'unhealthy';
@@ -44,9 +44,9 @@ export async function getHealthStatus(): Promise<HealthStatus> {
 
   let redisResponseTime = 0;
   let redisStatus = 'disconnected';
-  if (redis.status === 'ready') {
+  if (isRedisAvailable()) {
     const start = Date.now();
-    await redis.ping();
+    await redis!.ping();
     redisResponseTime = Date.now() - start;
     redisStatus = 'connected';
   }
