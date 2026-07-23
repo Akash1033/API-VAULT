@@ -1,13 +1,14 @@
 // Path: src/app.ts
 // Purpose: Express app setup — middleware stack, routes, error handling. No listen() here.
-// Dependencies: express, helmet, cors, morgan, middleware/*, routes/*
+// Dependencies: express, helmet, cors, morgan, middleware/*, routes/*, swagger-ui-express
 
-import express, { type Express } from 'express';
+import express, { type Express, type Request, type Response, type NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
+import swaggerUi from 'swagger-ui-express';
 import { env } from './config/env.js';
 import { morganStream } from './utils/logger.js';
 import { requestIdMiddleware } from './middleware/requestId.js';
@@ -16,13 +17,22 @@ import { globalErrorHandler } from './middleware/errorHandler.js';
 import { globalLimiter } from './middleware/rateLimiter.js';
 import { v1Router } from './routes/v1/index.js';
 import { healthRouter } from './routes/v1/health.routes.js';
+import { generateOpenApiDocument } from './config/swagger.js';
 
 const app: Express = express();
+app.set('trust proxy', 1);
 
 // ---------------------------------------------------------------------------
 // Security middleware
 // ---------------------------------------------------------------------------
-app.use(helmet());
+// Swagger UI injects inline scripts/styles — disable CSP only for the /api/docs path.
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.path.startsWith('/api/docs')) {
+    helmet({ contentSecurityPolicy: false })(req, res, next);
+  } else {
+    helmet()(req, res, next);
+  }
+});
 app.use(
   cors({
     origin: env.FRONTEND_URL,
@@ -71,6 +81,25 @@ app.use(
 // ---------------------------------------------------------------------------
 app.use('/api/v1', globalLimiter, v1Router);
 app.use('/api/health', healthRouter);
+
+// ---------------------------------------------------------------------------
+// API Explorer (Swagger UI) — mounted outside /api/v1 to skip rate limiter
+// ---------------------------------------------------------------------------
+const openApiDocument = generateOpenApiDocument();
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument, {
+  customSiteTitle: 'Portfolio API Explorer',
+  customCss: '.swagger-ui .topbar { display: none }',
+  swaggerOptions: {
+    persistAuthorization: true,
+    docExpansion: 'list',
+    filter: true,
+    tagsSorter: 'alpha',
+  },
+}));
+// Serve the raw OpenAPI JSON spec
+app.get('/api/docs.json', (_req: Request, res: Response) => {
+  res.json(openApiDocument);
+});
 
 // ---------------------------------------------------------------------------
 // Error handling (must be last)

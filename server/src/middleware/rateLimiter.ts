@@ -37,9 +37,6 @@ export const loginLimiter = rateLimit({
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: 'Too many login attempts. Please try again after 15 minutes.',
-  keyGenerator: (req: Request): string => {
-    return req.ip ?? req.socket.remoteAddress ?? 'unknown';
-  },
   handler: (_req: Request, res: Response): void => {
     createRateLimitResponse(_req, res);
   },
@@ -56,9 +53,6 @@ export const registerLimiter = rateLimit({
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: 'Too many registration attempts. Please try again after an hour.',
-  keyGenerator: (req: Request): string => {
-    return req.ip ?? req.socket.remoteAddress ?? 'unknown';
-  },
   handler: (_req: Request, res: Response): void => {
     createRateLimitResponse(_req, res);
   },
@@ -74,9 +68,6 @@ export const globalLimiter = rateLimit({
   limit: env.RATE_LIMIT_MAX_REQUESTS,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  keyGenerator: (req: Request): string => {
-    return req.ip ?? req.socket.remoteAddress ?? 'unknown';
-  },
   handler: (_req: Request, res: Response): void => {
     createRateLimitResponse(_req, res);
   },

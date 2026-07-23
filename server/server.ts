@@ -2,6 +2,7 @@
 // Purpose: Application entry point — validates env, connects DB, starts HTTP server
 // Dependencies: env config, db config, app, logger
 
+import './src/config/zod-setup.js';
 import { env } from './src/config/env.js';
 import { connectDB, registerShutdownHooks } from './src/config/db.js';
 import { connectRedis } from './src/config/redis.js';
@@ -35,6 +36,7 @@ async function bootstrap(): Promise<void> {
     // 5. Handle server-level errors
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${env.PORT} is already in use`);
         logger.error(`❌ Port ${env.PORT} is already in use`);
         process.exit(1);
       }
@@ -42,6 +44,7 @@ async function bootstrap(): Promise<void> {
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown startup error';
+    console.error('❌ Failed to start server', error);
     logger.error('❌ Failed to start server', { error: message });
     process.exit(1);
   }
@@ -49,6 +52,7 @@ async function bootstrap(): Promise<void> {
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error: Error) => {
+  console.error('UNCAUGHT EXCEPTION:', error);
   logger.error('UNCAUGHT EXCEPTION — shutting down', {
     error: error.message,
     stack: error.stack,
@@ -59,6 +63,7 @@ process.on('uncaughtException', (error: Error) => {
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason: unknown) => {
   const message = reason instanceof Error ? reason.message : String(reason);
+  console.error('UNHANDLED REJECTION:', reason);
   logger.error('UNHANDLED REJECTION — shutting down', { error: message });
   process.exit(1);
 });
