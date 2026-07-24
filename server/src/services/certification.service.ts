@@ -10,7 +10,7 @@ import type { CreateCertificationInput, UpdateCertificationInput } from '../vali
 
 interface ListFilters {
   readonly search?: string;
-  readonly isPublished?: boolean;
+  readonly isPublished?: boolean | 'all';
   readonly tags?: ReadonlyArray<string>;
 }
 
@@ -20,8 +20,13 @@ export async function listCertifications(
 ): Promise<{ certifications: ReadonlyArray<ICertificationDocument>; meta: IMeta }> {
   const query: Record<string, unknown> = {};
 
-  if (filters.isPublished !== undefined) query['isPublished'] = filters.isPublished;
-  else query['isPublished'] = true;
+  if (filters.isPublished === 'all') {
+    // Return both published and drafts
+  } else if (filters.isPublished !== undefined) {
+    query['isPublished'] = filters.isPublished;
+  } else {
+    query['isPublished'] = true;
+  }
 
   if (filters.tags && filters.tags.length > 0) query['tags'] = { $in: filters.tags };
 

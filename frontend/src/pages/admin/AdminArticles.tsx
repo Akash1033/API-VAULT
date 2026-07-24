@@ -50,7 +50,7 @@ export const AdminArticles: React.FC = () => {
 
   const { data: articlesData, isLoading } = useQuery({
     queryKey: ['articles'],
-    queryFn: () => getArticles()
+    queryFn: () => getArticles({ isPublished: 'all' })
   });
   const articles = articlesData?.data || [];
 

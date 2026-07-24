@@ -10,7 +10,7 @@ import type { CreateSkillInput, UpdateSkillInput } from '../validators/skill.val
 
 interface ListFilters {
   readonly search?: string;
-  readonly isPublished?: boolean;
+  readonly isPublished?: boolean | 'all';
   readonly category?: string;
 }
 
@@ -25,7 +25,9 @@ export async function listSkills(
 ): Promise<ListResult> {
   const query: Record<string, unknown> = {};
 
-  if (filters.isPublished !== undefined) {
+  if (filters.isPublished === 'all') {
+    // Return both published and drafts
+  } else if (filters.isPublished !== undefined) {
     query['isPublished'] = filters.isPublished;
   } else {
     query['isPublished'] = true;
@@ -43,9 +45,13 @@ export async function listSkills(
   const skip = (page - 1) * limit;
   const sortDirection = order === 'asc' ? 1 : -1;
 
+  const sortConfig: Record<string, 1 | -1> = sort === 'createdAt'
+    ? { displayOrder: 1, createdAt: sortDirection }
+    : { [sort]: sortDirection };
+
   const [skills, total] = await Promise.all([
     Skill.find(query)
-      .sort({ [sort]: sortDirection })
+      .sort(sortConfig)
       .skip(skip)
       .limit(limit)
       .lean() as unknown as Promise<ISkillDocument[]>,

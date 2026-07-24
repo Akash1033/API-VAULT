@@ -47,7 +47,7 @@ export const AdminSkills: React.FC = () => {
 
   const { data: skillsData, isLoading } = useQuery({
     queryKey: ['skills'],
-    queryFn: () => getSkills()
+    queryFn: () => getSkills({ isPublished: 'all' })
   });
   const skills = skillsData?.data || [];
 

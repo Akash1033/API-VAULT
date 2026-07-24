@@ -10,7 +10,7 @@ import type { CreateProjectInput, UpdateProjectInput } from '../validators/proje
 
 interface ListFilters {
   readonly search?: string;
-  readonly isPublished?: boolean;
+  readonly isPublished?: boolean | 'all';
   readonly tags?: ReadonlyArray<string>;
   readonly featured?: boolean;
 }
@@ -27,7 +27,9 @@ export async function listProjects(
   const query: Record<string, unknown> = {};
 
   // Default to published-only for public consumers
-  if (filters.isPublished !== undefined) {
+  if (filters.isPublished === 'all') {
+    // Return both published and drafts, so don't filter by isPublished
+  } else if (filters.isPublished !== undefined) {
     query['isPublished'] = filters.isPublished;
   } else {
     query['isPublished'] = true;
@@ -49,9 +51,13 @@ export async function listProjects(
   const skip = (page - 1) * limit;
   const sortDirection = order === 'asc' ? 1 : -1;
 
+  const sortConfig: Record<string, 1 | -1> = sort === 'createdAt'
+    ? { displayOrder: 1, createdAt: sortDirection }
+    : { [sort]: sortDirection };
+
   const [projects, total] = await Promise.all([
     Project.find(query)
-      .sort({ [sort]: sortDirection })
+      .sort(sortConfig)
       .skip(skip)
       .limit(limit)
       .select('-longDescription -images')

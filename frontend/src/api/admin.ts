@@ -22,7 +22,7 @@ export const getMe = () =>
   axiosInstance.get('/auth/me').then(r => r.data)
 
 // ─── PROJECTS ────────────────────────────────────────────
-export const getProjects = (params?: PaginationParams & { techStack?: string; isPublished?: boolean }) =>
+export const getProjects = (params?: PaginationParams & { techStack?: string; isPublished?: boolean | 'all' }) =>
   axiosInstance.get('/projects', { params }).then(r => r.data)
 
 export const getProjectById = (id: string) =>
@@ -38,7 +38,7 @@ export const deleteProject = (id: string) =>
   axiosInstance.delete(`/projects/${id}`).then(r => r.data)
 
 // ─── SKILLS ──────────────────────────────────────────────
-export const getSkills = (params?: { category?: string; grouped?: boolean; isPublished?: boolean }) =>
+export const getSkills = (params?: { category?: string; grouped?: boolean; isPublished?: boolean | 'all' }) =>
   axiosInstance.get('/skills', { params }).then(r => r.data)
 
 export const getSkillById = (id: string) =>
@@ -55,7 +55,7 @@ export const deleteSkill = (id: string) =>
 
 // ─── EXPERIENCE ──────────────────────────────────────────
 // CRITICAL: path is /experience (NOT /experiences with 's')
-export const getExperience = (params?: { isPublished?: boolean }) =>
+export const getExperience = (params?: { isPublished?: boolean | 'all' }) =>
   axiosInstance.get('/experience', { params }).then(r => r.data)
 
 export const getExperienceById = (id: string) =>
@@ -71,7 +71,7 @@ export const deleteExperience = (id: string) =>
   axiosInstance.delete(`/experience/${id}`).then(r => r.data)
 
 // ─── ARTICLES ────────────────────────────────────────────
-export const getArticles = (params?: { isPublished?: boolean; tag?: string; page?: number; limit?: number; includeDrafts?: boolean }) =>
+export const getArticles = (params?: { isPublished?: boolean | 'all'; tag?: string; page?: number; limit?: number; includeDrafts?: boolean }) =>
   axiosInstance.get('/articles', { params }).then(r => r.data)
 
 export const getArticleById = (id: string) =>
@@ -90,7 +90,7 @@ export const deleteArticle = (id: string) =>
   axiosInstance.delete(`/articles/${id}`).then(r => r.data)
 
 // ─── CERTIFICATIONS ──────────────────────────────────────
-export const getCertifications = (params?: { isPublished?: boolean }) =>
+export const getCertifications = (params?: { isPublished?: boolean | 'all' }) =>
   axiosInstance.get('/certifications', { params }).then(r => r.data)
 
 export const createCertification = (data: CreateCertificationPayload) =>

@@ -25,7 +25,7 @@ export const getAllProjects = catchAsync(async (req: Request, res: Response): Pr
     : undefined;
 
   const isPublishedParam = req.query['isPublished'] as string | undefined;
-  const isPublished = isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
+  const isPublished = isPublishedParam === 'all' ? 'all' : isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
   const featured = req.query['featured'] === 'true' ? true : req.query['featured'] === 'false' ? false : undefined;
 
   const { projects, meta } = await listProjects(req.pagination, {

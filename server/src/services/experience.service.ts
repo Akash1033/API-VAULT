@@ -10,7 +10,7 @@ import type { CreateExperienceInput, UpdateExperienceInput } from '../validators
 
 interface ListFilters {
   readonly search?: string;
-  readonly isPublished?: boolean;
+  readonly isPublished?: boolean | 'all';
   readonly tags?: ReadonlyArray<string>;
 }
 
@@ -20,7 +20,9 @@ export async function listExperiences(
 ): Promise<{ experiences: ReadonlyArray<IExperienceDocument>; meta: IMeta }> {
   const query: Record<string, unknown> = {};
 
-  if (filters.isPublished !== undefined) {
+  if (filters.isPublished === 'all') {
+    // Return both published and drafts
+  } else if (filters.isPublished !== undefined) {
     query['isPublished'] = filters.isPublished;
   } else {
     query['isPublished'] = true;

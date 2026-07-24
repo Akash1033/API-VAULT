@@ -19,7 +19,7 @@ export const getAllCertifications = catchAsync(async (req: Request, res: Respons
 
   const tags = req.query['tags'] ? (req.query['tags'] as string).split(',').map((t) => t.trim()) : undefined;
   const isPublishedParam = req.query['isPublished'] as string | undefined;
-  const isPublished = isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
+  const isPublished = isPublishedParam === 'all' ? 'all' : isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
 
   const { certifications, meta } = await listCertifications(req.pagination, {
     search: req.query['search'] as string | undefined,

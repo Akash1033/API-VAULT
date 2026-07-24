@@ -20,7 +20,7 @@ export const getAllArticles = catchAsync(async (req: Request, res: Response): Pr
 
   const tags = req.query['tags'] ? (req.query['tags'] as string).split(',').map((t) => t.trim()) : undefined;
   const isPublishedParam = req.query['isPublished'] as string | undefined;
-  const isPublished = isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
+  const isPublished = isPublishedParam === 'all' ? 'all' : isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
 
   const { articles, meta } = await listArticles(req.pagination, {
     search: req.query['search'] as string | undefined,

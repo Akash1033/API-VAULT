@@ -43,7 +43,7 @@ export const AdminCertifications: React.FC = () => {
 
   const { data: certsData, isLoading } = useQuery({
     queryKey: ['certifications'],
-    queryFn: () => getCertifications()
+    queryFn: () => getCertifications({ isPublished: 'all' })
   });
   const certifications = certsData?.data || [];
 

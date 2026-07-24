@@ -54,7 +54,7 @@ export const AdminProjects: React.FC = () => {
 
   const { data: projectsData, isLoading } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => getProjects()
+    queryFn: () => getProjects({ isPublished: 'all' })
   });
   const projects = projectsData?.data || [];
 

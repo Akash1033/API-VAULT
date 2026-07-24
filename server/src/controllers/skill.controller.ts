@@ -21,7 +21,7 @@ export const getAllSkills = catchAsync(async (req: Request, res: Response): Prom
   }
 
   const isPublishedParam = req.query['isPublished'] as string | undefined;
-  const isPublished = isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
+  const isPublished = isPublishedParam === 'all' ? 'all' : isPublishedParam === 'false' ? false : isPublishedParam === 'true' ? true : undefined;
 
   const { skills, meta } = await listSkills(req.pagination, {
     search: req.query['search'] as string | undefined,

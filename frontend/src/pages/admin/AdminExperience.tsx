@@ -44,7 +44,7 @@ export const AdminExperience: React.FC = () => {
 
   const { data: experienceData, isLoading } = useQuery({
     queryKey: ['experience'],
-    queryFn: () => getExperience()
+    queryFn: () => getExperience({ isPublished: 'all' })
   });
   const experience = experienceData?.data || [];
 
