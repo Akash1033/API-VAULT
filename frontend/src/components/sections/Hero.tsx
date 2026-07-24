@@ -43,7 +43,7 @@ export const Hero: React.FC = () => {
       `}</style>
       <section
         id="me"
-        className="w-full min-h-screen px-6 max-w-[1200px] mx-auto flex items-center justify-center py-20"
+        className="w-full px-4 md:px-6 max-w-[1200px] mx-auto flex items-center justify-center py-8 md:py-20 md:min-h-screen"
       >
         <div className="w-full bg-[#000000] border border-[#222] rounded-[10px] overflow-hidden shadow-2xl">
           {/* Terminal Window Controls */}
@@ -53,7 +53,7 @@ export const Hero: React.FC = () => {
             <div className="w-[12px] h-[12px] rounded-full bg-[#28c840]" />
           </div>
 
-          <div className="p-8 md:p-12 grid grid-cols-1 md:grid-cols-[55fr_45fr] gap-12 items-center">
+          <div className="p-5 sm:p-8 md:p-12 grid grid-cols-1 md:grid-cols-[55fr_45fr] gap-8 md:gap-12 items-center">
             <motion.div
               className="flex flex-col items-start w-full"
               initial={{ opacity: 0, y: 12 }}
@@ -62,7 +62,7 @@ export const Hero: React.FC = () => {
             >
               <div className="font-mono text-[12px] mb-5 relative">
                 <div className="text-[#888] opacity-80 mb-2">// developer profile</div>
-                <div className="text-[#a1a1a1] flex items-center gap-2">
+                <div className="text-[#a1a1a1] flex flex-wrap items-center gap-2">
                   <span>GET /api/v1/me &rarr;</span>
 
                   {/* Easter Egg 200 OK Container */}
@@ -84,7 +84,7 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
 
-              <h1 className="font-mono text-[52px] font-medium text-white leading-tight m-0 flex items-center h-[60px]">
+              <h1 className="font-mono text-[32px] sm:text-[42px] md:text-[52px] font-medium text-white leading-tight m-0 flex items-center h-[40px] sm:h-[48px] md:h-[60px]">
                 {typedName}<span className={`text-[#28c840] font-light -mt-1 ${!isTyping ? 'animate-text-blink' : ''}`}>|</span>
               </h1>
 
@@ -94,14 +94,14 @@ export const Hero: React.FC = () => {
                 <span className="text-[#888]">"</span>
               </div>
 
-              <p className="font-sans text-[15px] text-gray-300 leading-[1.7] max-w-[460px] mt-5 mb-0">
+              <p className="font-sans text-[14px] md:text-[15px] text-gray-300 leading-[1.7] max-w-[460px] mt-4 md:mt-5 mb-0">
                 I build distributed systems, production APIs, and infrastructure that scales. Currently obsessed with observability and zero-downtime deployments.
               </p>
 
-              <div className="flex gap-[12px] mt-[32px]">
+              <div className="flex flex-col sm:flex-row gap-[12px] w-full sm:w-auto mt-[24px] md:mt-[32px]">
                 <button
                   onClick={scrollToProjects}
-                  className="bg-transparent border border-[#28c840] text-[#28c840] font-mono text-[12px] px-[18px] py-[8px] rounded-[4px] hover:bg-[#28c840] hover:text-black transition-all duration-300 cursor-pointer group flex items-center gap-2"
+                  className="w-full sm:w-auto justify-center bg-transparent border border-[#28c840] text-[#28c840] font-mono text-[12px] px-[18px] py-[8px] rounded-[4px] hover:bg-[#28c840] hover:text-black transition-all duration-300 cursor-pointer group flex items-center gap-2"
                 >
                   View Projects <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
                 </button>
@@ -111,7 +111,7 @@ export const Hero: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={trackResumeClick}
-                  className="bg-transparent border border-[#555] text-[#888] font-mono text-[12px] px-[18px] py-[8px] rounded-[4px] hover:border-[#28c840] hover:text-[#28c840] transition-colors duration-300 no-underline inline-block"
+                  className="w-full sm:w-auto justify-center bg-transparent border border-[#555] text-[#888] font-mono text-[12px] px-[18px] py-[8px] rounded-[4px] hover:border-[#28c840] hover:text-[#28c840] transition-colors duration-300 no-underline flex items-center"
                 >
                   GET /resume
                 </a>
