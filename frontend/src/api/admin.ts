@@ -146,3 +146,11 @@ export interface DashboardStats {
 export const getDashboardStats = async (): Promise<DashboardStats> => {
   return axiosInstance.get('/dashboard/overview').then(r => r.data.data);
 }
+
+// ─── SETTINGS ────────────────────────────────────────────
+export const getMaintenanceStatus = () =>
+  axiosInstance.get('/settings/maintenance').then(r => r.data)
+
+export const updateMaintenanceStatus = (data: { maintenanceMode?: boolean; maintenanceMessage?: string }) =>
+  axiosInstance.patch('/settings/maintenance', data).then(r => r.data)
+

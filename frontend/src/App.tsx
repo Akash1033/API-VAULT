@@ -1,14 +1,15 @@
 // Path: src/App.tsx
-// Purpose: Application routing with nested Admin layout and analytics page tracking
-// Dependencies: react, react-router-dom, usePageTracker
+// Purpose: Application routing with nested Admin layout, analytics page tracking, and maintenance mode gate
+// Dependencies: react, react-router-dom, usePageTracker, maintenanceStore
 
-import React, { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { Suspense, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { SectionSkeleton } from './components/shared/SectionSkeleton';
 import { Toast } from './components/admin/Toast';
 import { AdminRoute } from './components/admin/AdminRoute';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { usePageTracker } from './hooks/usePageTracker';
+import { useMaintenanceStore } from './store/maintenanceStore';
 
 // Lazy load route pages
 const PortfolioPage = React.lazy(() => import('./pages/PortfolioPage').then(m => ({ default: m.PortfolioPage })));
@@ -28,6 +29,8 @@ const AdminCertifications = React.lazy(() => import('./pages/admin/AdminCertific
 const AdminMessages = React.lazy(() => import('./pages/admin/AdminMessages').then(m => ({ default: m.AdminMessages })));
 const AdminAnalytics = React.lazy(() => import('./pages/admin/AdminAnalytics'));
 const AdminPayments = React.lazy(() => import('./pages/admin/AdminPayments'));
+const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
+const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 
 /**
  * Inner wrapper component that has Router context.
@@ -35,6 +38,41 @@ const AdminPayments = React.lazy(() => import('./pages/admin/AdminPayments'));
  */
 const AppInner: React.FC = () => {
   usePageTracker();
+  const location = useLocation();
+  const { isMaintenanceMode } = useMaintenanceStore();
+
+  // Check maintenance status on initial load for non-admin routes
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  useEffect(() => {
+    if (isAdminRoute) return; // Never check maintenance for admin routes
+
+    const API_HOST = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    fetch(`${API_HOST}/api/v1/settings/maintenance`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.data?.maintenanceMode) {
+          useMaintenanceStore.getState().setMaintenance(
+            true,
+            json.data.maintenanceMessage || 'Site is under maintenance.'
+          );
+        } else {
+          useMaintenanceStore.getState().clearMaintenance();
+        }
+      })
+      .catch(() => {
+        // Silently ignore — don't block the app if the check fails
+      });
+  }, [isAdminRoute]);
+
+  // If maintenance mode is active and this is NOT an admin route, show maintenance page
+  if (isMaintenanceMode && !isAdminRoute) {
+    return (
+      <Suspense fallback={<SectionSkeleton />}>
+        <MaintenancePage />
+      </Suspense>
+    );
+  }
 
   return (
     <Routes>
@@ -199,6 +237,19 @@ const AppInner: React.FC = () => {
             <AdminLayout>
               <Suspense fallback={<SectionSkeleton />}>
                 <AdminPayments />
+              </Suspense>
+            </AdminLayout>
+          </AdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/settings"
+        element={
+          <AdminRoute>
+            <AdminLayout>
+              <Suspense fallback={<SectionSkeleton />}>
+                <AdminSettings />
               </Suspense>
             </AdminLayout>
           </AdminRoute>

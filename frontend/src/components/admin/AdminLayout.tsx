@@ -157,11 +157,21 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
             Analytics
           </span>
         </div>
-        <div className="px-[20px] py-[8px] flex items-center gap-[10px] cursor-not-allowed text-textMuted border-l-[2px] border-transparent">
-          <span className="font-mono text-[10px] px-[8px] py-[2px] rounded-[12px] bg-[rgba(255,255,255,0.1)] text-textSecondary">
+        <div 
+          onClick={() => {
+            navigate('/admin/settings');
+            setIsSidebarOpen(false);
+          }}
+          className={`px-[20px] py-[8px] flex items-center gap-[10px] cursor-pointer transition-colors ${
+            location.pathname.startsWith('/admin/settings') 
+              ? 'bg-bgRaised text-amber border-l-[2px] border-amber' 
+              : 'text-textMuted border-l-[2px] border-transparent hover:bg-bgRaised hover:text-textPrimary'
+          }`}
+        >
+          <span className="font-mono text-[10px] px-[8px] py-[2px] rounded-[12px] bg-[rgba(74,222,128,0.12)] text-green">
             GET
           </span>
-          <span className="font-mono text-[12px]">
+          <span className={`font-mono text-[12px] ${location.pathname.startsWith('/admin/settings') ? 'text-amber' : ''}`}>
             Settings
           </span>
         </div>

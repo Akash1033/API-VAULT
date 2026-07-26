@@ -1,9 +1,10 @@
 // Path: src/api/axios.ts
-// Purpose: Axios instance with auth interception and silent token refresh
-// Dependencies: axios, zustand (authStore)
+// Purpose: Axios instance with auth interception, silent token refresh, and maintenance mode detection
+// Dependencies: axios, zustand (authStore, maintenanceStore)
 
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../store/authStore';
+import { useMaintenanceStore } from '../store/maintenanceStore';
 
 const API_HOST = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const baseURL = `${API_HOST}/api/v1`;
@@ -35,7 +36,26 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as CustomAxiosRequestConfig;
-    
+
+    // ─── Maintenance mode detection ────────────────────────────────────
+    // If the server returns 503 with maintenance: true in the body,
+    // set the global maintenance store — but ONLY for non-admin page contexts.
+    // Admin routes must never be affected by maintenance mode on the frontend.
+    if (error.response?.status === 503) {
+      const data = error.response.data as Record<string, unknown> | undefined;
+      if (data && data['maintenance'] === true) {
+        const isAdminRoute = window.location.pathname.startsWith('/admin');
+        if (!isAdminRoute) {
+          useMaintenanceStore.getState().setMaintenance(
+            true,
+            (data['message'] as string) || 'Site is under maintenance.'
+          );
+        }
+        return Promise.reject(error);
+      }
+    }
+
+    // ─── Silent token refresh ──────────────────────────────────────────
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       
@@ -63,3 +83,4 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
