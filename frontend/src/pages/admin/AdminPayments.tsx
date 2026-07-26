@@ -96,7 +96,7 @@ const RevenueStatsCards: React.FC<{
 }> = ({ stats, isLoading }) => {
   if (isLoading || !stats) {
     return (
-      <div className="grid grid-cols-4 gap-[14px] mb-[28px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px] mb-[28px]">
         <SkeletonCard />
         <SkeletonCard />
         <SkeletonCard />
@@ -113,7 +113,7 @@ const RevenueStatsCards: React.FC<{
         : 0;
 
   return (
-    <div className="grid grid-cols-4 gap-[14px] mb-[28px]">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px] mb-[28px]">
       {/* Card 1 — Total Revenue */}
       <div className="bg-bgSurface border border-border rounded-[8px] p-[18px_20px]">
         <div className="font-mono text-[10px] text-textMuted mb-[8px]">// total_revenue</div>
@@ -182,7 +182,7 @@ const DonationDistribution: React.FC<{
   }
 
   return (
-    <div className="grid grid-cols-[3fr_2fr] gap-[16px] mb-[28px]">
+    <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-[16px] mb-[28px]">
       {/* LEFT — Horizontal bar chart */}
       <div className="bg-bgSurface border border-border rounded-[8px] p-[20px]">
         <div className="font-mono text-[11px] text-textMuted mb-[12px]">
@@ -443,7 +443,7 @@ export const AdminPayments: React.FC = () => {
   return (
     <>
       {/* ─── PAGE HEADER ──────────────────────────────────────── */}
-      <div className="flex justify-between items-start mb-[28px]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-[16px] mb-[28px]">
         <div>
           <div className="font-mono text-[12px] text-green">
             GET /api/v1/payment/admin &rarr; 200 OK
@@ -506,7 +506,7 @@ export const AdminPayments: React.FC = () => {
 
       {/* Table */}
       <div className="w-full overflow-x-auto bg-bgSurface border border-border rounded-[8px]">
-        <table className="w-full border-collapse text-left">
+        <table className="w-full border-collapse text-left whitespace-nowrap md:whitespace-normal">
           <thead>
             <tr>
               <th className="font-mono text-[10px] text-textMuted border-b border-border p-[10px_14px] uppercase tracking-[0.06em] font-normal" style={{ width: '200px' }}>

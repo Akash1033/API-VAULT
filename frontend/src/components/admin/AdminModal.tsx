@@ -82,9 +82,9 @@ export const AdminModal: React.FC<AdminModalProps> = ({
             exit={{ opacity: 0, scale: 0.96, x: "-50%", y: "-50%" }}
             transition={{ duration: 0.15 }}
             style={{ width: 'calc(100% - 32px)', maxWidth: getWidth() }}
-            className="fixed top-1/2 left-1/2 z-[101] bg-bgSurface border border-border rounded-[8px] max-h-[85vh] flex flex-col overflow-hidden"
+            className="fixed top-1/2 left-1/2 z-[101] bg-bgSurface border border-border rounded-[8px] max-h-[90vh] flex flex-col overflow-hidden"
           >
-            <div className="px-[20px] py-[16px] border-b border-border flex justify-between items-center">
+            <div className="px-[16px] md:px-[20px] py-[16px] border-b border-border flex justify-between items-center">
               <span className="font-mono text-[13px] text-textPrimary">
                 // {title}
               </span>
@@ -96,7 +96,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               </button>
             </div>
             
-            <div className="p-[20px] overflow-y-auto flex-1">
+            <div className="p-[16px] md:p-[20px] overflow-y-auto flex-1">
               {children}
             </div>
           </motion.div>

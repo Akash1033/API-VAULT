@@ -2,7 +2,7 @@
 // Purpose: Persistent shell layout for the admin dashboard
 // Dependencies: react, react-router-dom, authStore
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
@@ -10,6 +10,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const location = useLocation();
   const navigate = useNavigate();
   const { clearAuth } = useAuthStore();
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     clearAuth();
@@ -25,12 +27,21 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   ];
 
   return (
-    <div className="w-full h-screen overflow-hidden grid grid-cols-[220px_1fr] grid-rows-[52px_1fr] bg-bgBase text-textPrimary">
+    <div className="w-full h-screen overflow-hidden grid grid-cols-1 md:grid-cols-[220px_1fr] grid-rows-[52px_1fr] bg-bgBase text-textPrimary">
       
       {/* TOPBAR */}
-      <div className="col-span-full h-[52px] bg-bgSurface border-b border-border flex items-center px-[24px] justify-between">
-        <div className="font-mono text-[13px] text-green">~/portfolio/admin</div>
-        <div className="font-sans text-[13px] text-textSecondary">Admin Dashboard</div>
+      <div className="col-span-full h-[52px] bg-bgSurface border-b border-border flex items-center px-[16px] md:px-[24px] justify-between z-40">
+        <div className="flex items-center gap-[12px]">
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+            className="md:hidden text-textMuted hover:text-textPrimary bg-transparent border-none p-0 cursor-pointer text-[18px] leading-none"
+          >
+            ☰
+          </button>
+          <div className="font-mono text-[13px] text-green hidden sm:block">~/portfolio/admin</div>
+          <div className="font-mono text-[13px] text-green sm:hidden">~/admin</div>
+        </div>
+        <div className="font-sans text-[13px] text-textSecondary hidden sm:block">Admin Dashboard</div>
         <div className="flex flex-row gap-[16px] items-center">
           <a href="/" target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] text-textMuted hover:text-green cursor-pointer no-underline">
             &larr; View Site
@@ -41,8 +52,21 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         </div>
       </div>
 
+      {/* OVERLAY FOR MOBILE SIDEBAR */}
+      {isSidebarOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-[rgba(0,0,0,0.5)] z-40" 
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* SIDEBAR */}
-      <div className="row-start-2 col-start-1 w-[220px] bg-bgSurface border-r border-border overflow-y-auto py-[16px]">
+      <div className={`fixed md:static inset-y-0 left-0 z-50 w-[220px] bg-bgSurface border-r border-border overflow-y-auto py-[16px] transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out md:row-start-2 md:col-start-1 h-full`}>
+        <div className="flex md:hidden justify-end px-[20px] mb-[8px]">
+          <button onClick={() => setIsSidebarOpen(false)} className="text-textMuted bg-transparent border-none text-[20px] leading-none cursor-pointer">
+            &times;
+          </button>
+        </div>
         <div className="font-mono text-[10px] text-textMuted px-[20px] py-[8px] mt-[8px]">
           // content
         </div>
@@ -52,7 +76,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           return (
             <div 
               key={item.path}
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                navigate(item.path);
+                setIsSidebarOpen(false);
+              }}
               className={`px-[20px] py-[8px] flex items-center gap-[10px] cursor-pointer transition-colors ${
                 isActive 
                   ? 'bg-bgRaised text-amber border-l-[2px] border-amber' 
@@ -73,7 +100,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           // inbox
         </div>
         <div 
-          onClick={() => navigate('/admin/messages')}
+          onClick={() => {
+            navigate('/admin/messages');
+            setIsSidebarOpen(false);
+          }}
           className={`px-[20px] py-[8px] flex items-center gap-[10px] cursor-pointer transition-colors ${
             location.pathname.startsWith('/admin/messages') 
               ? 'bg-bgRaised text-amber border-l-[2px] border-amber' 
@@ -88,7 +118,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           </span>
         </div>
         <div 
-          onClick={() => navigate('/admin/payments')}
+          onClick={() => {
+            navigate('/admin/payments');
+            setIsSidebarOpen(false);
+          }}
           className={`px-[20px] py-[8px] flex items-center gap-[10px] cursor-pointer transition-colors ${
             location.pathname.startsWith('/admin/payments') 
               ? 'bg-bgRaised text-amber border-l-[2px] border-amber' 
@@ -107,7 +140,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           // system
         </div>
         <div 
-          onClick={() => navigate('/admin/analytics')}
+          onClick={() => {
+            navigate('/admin/analytics');
+            setIsSidebarOpen(false);
+          }}
           className={`px-[20px] py-[8px] flex items-center gap-[10px] cursor-pointer transition-colors ${
             location.pathname.startsWith('/admin/analytics') 
               ? 'bg-bgRaised text-amber border-l-[2px] border-amber' 
@@ -132,7 +168,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <div className="row-start-2 col-start-2 overflow-y-auto p-[32px] bg-bgBase">
+      <div className="row-start-2 md:col-start-2 col-start-1 overflow-y-auto p-[16px] sm:p-[24px] md:p-[32px] bg-bgBase w-full max-w-[100vw]">
         {children}
       </div>
       

@@ -235,9 +235,11 @@ export const AdminAnalytics: React.FC = () => {
 
   return (
     <div>
-      {/* Page header */}
-      <div className="font-mono text-[12px] text-green mb-[24px]">
-        GET /admin/analytics &rarr; 200 OK
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-[16px] mb-[24px]">
+        <div>
+          <div className="font-mono text-[12px] text-green mb-[4px]">GET /admin/analytics &rarr; 200 OK</div>
+          <h1 className="font-sans text-[22px] text-textPrimary m-0 font-medium">Analytics</h1>
+        </div>
       </div>
 
       {/* ─── SECTION 1: Live Stats Bar ─────────────────────────── */}

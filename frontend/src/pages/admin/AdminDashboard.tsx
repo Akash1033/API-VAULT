@@ -16,11 +16,11 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div>
-      <div className="font-mono text-[12px] text-green mb-[24px]">
+      <div className="flex flex-col sm:flex-row font-mono text-[12px] text-green mb-[24px] gap-[8px] break-all">
         GET /admin/overview &rarr; 200 OK
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-[16px] mb-[32px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[16px] mb-[32px]">
         
         <div 
           data-testid="admin-stat-card" 
@@ -89,7 +89,7 @@ export const AdminDashboard: React.FC = () => {
       </div>
       
       <div className="w-full overflow-x-auto bg-bgSurface border border-border rounded-[8px]">
-        <table className="w-full border-collapse">
+        <table className="w-full border-collapse whitespace-nowrap md:whitespace-normal">
           <thead>
             <tr>
               <th className="font-mono text-[10px] text-textMuted border-b border-border p-[8px_12px] text-left font-normal">Resource</th>

@@ -25,7 +25,7 @@ export const AdminTable = <T,>({
 }: AdminTableProps<T>) => {
   return (
     <div className="w-full overflow-x-auto bg-bgSurface border border-border rounded-[8px]">
-      <table className="w-full border-collapse text-left">
+      <table className="w-full border-collapse text-left whitespace-nowrap md:whitespace-normal">
         <thead>
           <tr>
             {columns.map((col) => (
@@ -67,7 +67,7 @@ export const AdminTable = <T,>({
                     {col.render ? col.render(row) : (rowData[col.key] as React.ReactNode)}
                   </td>
                 ))}
-                <td className="p-[12px_14px] flex justify-end gap-[8px]">
+                <td className="p-[12px_14px] flex flex-wrap md:flex-nowrap justify-end gap-[8px]">
                   {extraActions && extraActions(row)}
                   <button 
                     onClick={() => onEdit(row)}

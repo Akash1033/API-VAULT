@@ -149,7 +149,7 @@ export const AdminMessages: React.FC = () => {
                   </div>
                 )}
                 
-                <div className="mt-[12px] flex gap-[10px] items-center pt-[12px] border-t border-border">
+                <div className="mt-[12px] flex flex-wrap sm:flex-nowrap gap-[10px] items-center pt-[12px] border-t border-border">
                   {!msg.isRead ? (
                     <button 
                       onClick={() => markReadMutation.mutate(msg._id)}

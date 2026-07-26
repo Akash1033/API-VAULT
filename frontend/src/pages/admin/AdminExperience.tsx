@@ -227,7 +227,7 @@ export const AdminExperience: React.FC = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-[24px]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-[16px] mb-[24px]">
         <div>
           <div className="font-mono text-[12px] text-green mb-[4px]">GET /api/v1/experience &rarr; 200 OK</div>
           <h1 className="font-sans text-[22px] text-textPrimary m-0 font-medium">Experience</h1>
@@ -251,7 +251,7 @@ export const AdminExperience: React.FC = () => {
       <AdminModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="experience" size="lg">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[16px]">
           
-          <div className="grid grid-cols-2 gap-[12px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-[12px]">
             <div className="flex flex-col">
               <label className="font-mono text-[11px] text-textMuted mb-[4px]">company *</label>
               <input {...register('company')} placeholder="e.g. Zerodha" className="bg-bgRaised border border-border rounded-[4px] font-mono text-[12px] text-textPrimary px-[10px] py-[6px] outline-none focus:border-green w-full" />
@@ -280,7 +280,7 @@ export const AdminExperience: React.FC = () => {
           </div>
 
           <div className="flex flex-col">
-            <div className="grid grid-cols-2 gap-[12px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[12px]">
               <div className="flex flex-col">
                 <label className="font-mono text-[11px] text-textMuted mb-[4px]">startDate *</label>
                 <input type="month" {...register('startDate')} className="bg-bgRaised border border-border rounded-[4px] font-mono text-[12px] text-textPrimary px-[10px] py-[6px] outline-none focus:border-green w-full" />
@@ -356,7 +356,7 @@ export const AdminExperience: React.FC = () => {
                 />
               </div>
 
-              <div className="flex flex-row gap-[24px] items-center">
+              <div className="flex flex-col md:flex-row gap-[16px] md:gap-[24px] md:items-center">
                 <Controller
                   control={control}
                   name="isPublished"
@@ -373,9 +373,9 @@ export const AdminExperience: React.FC = () => {
             </div>
           </CollapsibleSection>
 
-          <div className="flex justify-end items-center gap-[12px] mt-[16px] pt-[16px] border-t border-border">
+          <div className="flex flex-col-reverse md:flex-row justify-end items-stretch md:items-center gap-[12px] mt-[16px] pt-[16px] border-t border-border">
             {(createMutation.isError || updateMutation.isError) && (
-              <span className="font-mono text-[11px] text-red mr-auto">Error: mutation failed</span>
+              <span className="font-mono text-[11px] text-red mr-auto text-center md:text-left mb-[8px] md:mb-0">Error: mutation failed</span>
             )}
             <button type="button" onClick={() => setIsModalOpen(false)} className="bg-transparent border border-border text-textMuted px-[16px] py-[8px] rounded-[4px] font-mono text-[12px] cursor-pointer hover:border-textMuted">
               Cancel
